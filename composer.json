@@ -1,13 +1,7 @@
 {
-    "name": ":vendor_slug/:package_slug",
+    "name": ":package_name",
     "description": ":package_description",
     "type": "sylius-plugin",
-    "keywords": [
-        ":vendor_name",
-        "sylius-plugin",
-        ":package_slug"
-    ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
     "license": "MIT",
     "authors": [
         {
@@ -17,13 +11,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "VendorName\\SyliusExamplePlugin\\": "src/",
-            "Tests\\VendorName\\SyliusExamplePlugin\\Behat\\": "tests/Behat"
+            ":full_namespace\\": "src/",
+            "Tests\\:full_namespace\\Behat\\": "tests/Behat"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\VendorName\\SyliusExamplePlugin\\": "tests/"
+            "Tests\\:full_namespace\\": "tests/"
         }
     },
     "require": {
