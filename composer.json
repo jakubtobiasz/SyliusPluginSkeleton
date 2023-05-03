@@ -11,13 +11,13 @@
     ],
     "autoload": {
         "psr-4": {
-            ":full_namespace\\": "src/",
-            "Tests\\:full_namespace\\Behat\\": "tests/Behat"
+            ":full_namespace_double_backslash\\": "src/",
+            "Tests\\:full_namespace_double_backslash\\Behat\\": "tests/Behat"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\:full_namespace\\": "tests/"
+            "Tests\\:full_namespace_double_backslash\\": "tests/"
         }
     },
     "require": {
