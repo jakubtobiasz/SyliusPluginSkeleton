@@ -7,7 +7,7 @@ namespace :full_namespace;
 use Sylius\Bundle\CoreBundle\Application\SyliusPluginTrait;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-final class :fullPluginName extends Bundle
+final class :plugin_class extends Bundle
 {
     use SyliusPluginTrait;
 
