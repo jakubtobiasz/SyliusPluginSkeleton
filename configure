@@ -126,6 +126,32 @@ function safeUnlink(string $filename)
     }
 }
 
+function deleteRecursively(string $path): void
+{
+    if (!file_exists($path)) {
+        return;
+    }
+
+    $projectPath = __DIR__;
+    if (!str_starts_with(realpath($path), realpath($projectPath))) {
+        echo "Warning: Attempted to delete a file outside the project path: " . realpath($path) . PHP_EOL;
+        return;
+    }
+
+    if (is_file($path)) {
+        unlink($path);
+        return;
+    }
+
+    $dir = new DirectoryIterator($path);
+    foreach ($dir as $item) {
+        if (!$item->isDot()) {
+            deleteRecursively($item->getPathname());
+        }
+    }
+    rmdir($path);
+}
+
 function determineSeparator(string $path): string
 {
     return str_replace('/', DIRECTORY_SEPARATOR, $path);
@@ -159,10 +185,16 @@ $packageDescription = ask('Package description', "This is my brand new Sylius pl
 $fullNamespace = "{$vendorName}\\{$pluginName}";
 $fullNamespaceDoubleBackslash = "{$vendorName}\\\\{$pluginName}";
 $pluginClass = "{$vendorName}{$pluginName}";
-$configKey = str_replace('-', '_', "{$vendorNameSlug}-${pluginNameSlug}");
+$configKey = title_snake(str_replace('/', '-', $packageName);
 $extensionClass = str_replace('Plugin', 'Extension', $pluginClass);
 
-writeln($fullNamespaceDoubleBackslash);
+$useDocker = confirm('Use Docker?', true);
+$usePsalm = confirm('Use Psalm?', true);
+$usePhpStan = confirm('Use PHPStan?', true);
+$useEcs = confirm('Use ECS?', true);
+$usePhpUnit = confirm('Use PHPUnit?', true);
+$usePhpSpec = confirm('Use PHPSpec?', true);
+$useBehat = confirm('Use Behat?', true);
 
 writeln('------');
 writeln("Author       : {$authorName}, <{$authorEmail}>");
@@ -172,6 +204,13 @@ writeln("Package name : {$packageName} <{$packageDescription}>");
 writeln("Namespace    : {$fullNamespace}");
 writeln('---');
 writeln('Packages & Utilities');
+writeln('Use Docker       : '.($useDocker ? 'yes' : 'no'));
+writeln('Use Psalm        : '.($usePsalm ? 'yes' : 'no'));
+writeln('Use PHPStan      : '.($usePhpStan ? 'yes' : 'no'));
+writeln('Use ECS          : '.($useEcs ? 'yes' : 'no'));
+writeln('Use PHPUnit      : '.($usePhpUnit ? 'yes' : 'no'));
+writeln('Use PHPSpec      : '.($usePhpSpec ? 'yes' : 'no'));
+writeln('Use Behat        : '.($useBehat ? 'yes' : 'no'));
 writeln('------');
 
 writeln('This script will replace the above values in all relevant files in the project directory.');
@@ -201,6 +240,70 @@ foreach ($files as $file) {
         str_contains($file, 'README.md') => remove_readme_paragraphs($file),
         default => [],
     };
+}
+
+if (false === $useDocker) {
+    safeUnlink(__DIR__ . '/.docker/nginx/nginx.conf');
+    safeUnlink(__DIR__ . '/.docker/php/php.ini');
+    safeUnlink(__DIR__ . '/docker-compose.yml');
+    deleteRecursively(__DIR__ . '/.docker');
+}
+
+if (false === $usePsalm) {
+    safeUnlink(__DIR__ . '/psalm.xml');
+    remove_composer_deps(['vimeo/psalm']);
+}
+
+if (false === $usePhpStan) {
+    safeUnlink(__DIR__ . '/phpstan.neon');
+    remove_composer_deps([
+        'phpstan/extension-installer',
+        'phpstan/phpstan',
+        'phpstan/phpstan-doctrine',
+        'phpstan/phpstan-strict-rules',
+        'phpstan/phpstan-webmozart-assert',
+    ]);
+}
+
+if (false === $useEcs) {
+    safeUnlink(__DIR__ . '/ecs.php');
+    remove_composer_deps(['sylius-labs/coding-standard']);
+}
+
+if (false === $usePhpUnit) {
+    safeUnlink(__DIR__ . '/phpunit.xml.dist');
+    remove_composer_deps(['phpunit/phpunit']);
+}
+
+if (false === $usePhpSpec) {
+    safeUnlink(__DIR__ . '/phpspec.yml.dist');
+    deleteRecursively(__DIR__ . '/spec');
+    remove_composer_deps(['phpspec/phpspec']);
+}
+
+if (false === $useBehat) {
+    safeUnlink(__DIR__ . '/behat.yml.dist');
+    deleteRecursively(__DIR__ . '/etc');
+    deleteRecursively(__DIR__ . '/features');
+    deleteRecursively(__DIR__ . '/tests/Behat');
+    remove_composer_deps([
+        "behat/behat",
+        "behat/mink-selenium2-driver",
+        "dmore/behat-chrome-extension",
+        "dmore/chrome-mink-driver",
+        "friends-of-behat/mink",
+        "friends-of-behat/mink-browserkit-driver",
+        "friends-of-behat/mink-debug-extension",
+        "friends-of-behat/mink-extension",
+        "friends-of-behat/page-object-extension",
+        "friends-of-behat/suite-settings-extension",
+        "friends-of-behat/symfony-extension",
+        "friends-of-behat/variadic-extension",
+    ]);
+}
+
+if (false === $usePhpUnit && false === $useBehat) {
+    remove_composer_deps(['symfony/browser-kit']);
 }
 
 //confirm('Execute `composer install` and run tests?') && run('composer install && composer test');
