@@ -67,6 +67,7 @@
         }
     },
     "scripts": {
+        "configure": "php configure.php",
         "serve": "symfony serve --dir=tests/Application --daemon",
         "server:stop": "symfony server:stop --dir=tests/Application",
         "ecs": "ecs",
