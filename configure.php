@@ -58,7 +58,11 @@ function replace_in_file(string $file, array $replacements): void
 
 function remove_composer_deps(array $names): void
 {
-    $data = json_decode(file_get_contents(__DIR__.'/composer.json'), true);
+    $data = json_decode(file_get_contents(__DIR__ . '/composer.json'), true);
+
+    if (!isset($data['require-dev']) || !is_array($data['require-dev'])) {
+        return;
+    }
 
     foreach ($data['require-dev'] as $name => $version) {
         if (in_array($name, $names, true)) {
@@ -66,7 +70,7 @@ function remove_composer_deps(array $names): void
         }
     }
 
-    file_put_contents(__DIR__.'/composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    file_put_contents(__DIR__ . '/composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 }
 
 function remove_composer_script(string $scriptName): void
@@ -75,6 +79,10 @@ function remove_composer_script(string $scriptName): void
     $composerJson = file_get_contents(__DIR__ . '/composer.json');
     /** @var array{scripts: array<string, string|array>} $data */
     $data = json_decode($composerJson, true);
+
+    if (!isset($data['scripts']) || !is_array($data['scripts'])) {
+        return;
+    }
 
     foreach ($data['scripts'] as $name => $script) {
         if (is_array($script) && in_array("@{$scriptName}", $script, true)) {
@@ -87,7 +95,7 @@ function remove_composer_script(string $scriptName): void
         }
     }
 
-    file_put_contents(__DIR__.'/composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    file_put_contents(__DIR__ . '/composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 }
 
 function remove_readme_paragraphs(string $file): void
@@ -202,6 +210,8 @@ if (! confirm('Modify files?', true)) {
 
 $files = (str_starts_with(strtoupper(PHP_OS), 'WIN') ? replaceForWindows() : replaceForAllOtherOSes());
 
+safeUnlink(__DIR__ . '/composer.json');
+
 foreach ($files as $file) {
     replace_in_file($file, [
         ':author_email' => $authorEmail,
@@ -216,6 +226,7 @@ foreach ($files as $file) {
     ]);
 
     match (true) {
+        str_contains($file, determineSeparator('composer.template.json')) => rename($file, determineSeparator('composer.json')),
         str_contains($file, determineSeparator('src/Plugin.php')) => rename($file, determineSeparator('./src/'.$pluginClass.'.php')),
         str_contains($file, determineSeparator('src/DependencyInjection/Extension.php')) => rename($file, determineSeparator('./src/DependencyInjection/'.$extensionClass.'.php')),
         str_contains($file, 'README.md') => remove_readme_paragraphs($file),
