@@ -80,6 +80,7 @@
         "phpstan": "phpstan",
         "phpspec": "phpspec run",
         "phpunit": "phpunit",
+        "behat": "APP_ENV=test vendor/bin/behat",
         "static-analysis": [
             "@ecs",
             "@psalm",
@@ -87,7 +88,8 @@
         ],
         "tests": [
             "@phpspec",
-            "@phpunit"
+            "@phpunit",
+            "@behat"
         ],
         "ci": [
             "@static-analysis",
