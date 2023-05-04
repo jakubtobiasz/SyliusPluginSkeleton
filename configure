@@ -70,14 +70,21 @@ function remove_composer_deps(array $names): void
     file_put_contents(__DIR__.'/composer.json', json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
 }
 
-function remove_composer_script($scriptName): void
+function remove_composer_script(string $scriptName): void
 {
-    $data = json_decode(file_get_contents(__DIR__.'/composer.json'), true);
+    /** @var string $composerJson */
+    $composerJson = file_get_contents(__DIR__ . '/composer.json');
+    /** @var array{scripts: array<string, string|array>} $data */
+    $data = json_decode($composerJson, true);
 
     foreach ($data['scripts'] as $name => $script) {
+        if (is_array($script) && in_array("@{$scriptName}", $script, true)) {
+            $data['scripts'][$name] = array_filter($data['scripts'][$name], fn (string $script) => $script !== "@{$scriptName}");
+            $data['scripts'][$name] = array_values($data['scripts'][$name]);
+        }
+
         if ($scriptName === $name) {
             unset($data['scripts'][$name]);
-            break;
         }
     }
 
@@ -227,6 +234,7 @@ if (false === $useDocker) {
 if (false === $usePsalm) {
     safeUnlink(__DIR__ . '/psalm.xml');
     remove_composer_deps(['vimeo/psalm']);
+    remove_composer_script('psalm');
 }
 
 if (false === $usePhpStan) {
@@ -238,22 +246,26 @@ if (false === $usePhpStan) {
         'phpstan/phpstan-strict-rules',
         'phpstan/phpstan-webmozart-assert',
     ]);
+    remove_composer_script('phpstan');
 }
 
 if (false === $useEcs) {
     safeUnlink(__DIR__ . '/ecs.php');
     remove_composer_deps(['sylius-labs/coding-standard']);
+    remove_composer_script('ecs');
 }
 
 if (false === $usePhpUnit) {
     safeUnlink(__DIR__ . '/phpunit.xml.dist');
     remove_composer_deps(['phpunit/phpunit']);
+    remove_composer_script('phpunit');
 }
 
 if (false === $usePhpSpec) {
     safeUnlink(__DIR__ . '/phpspec.yml.dist');
     deleteRecursively(__DIR__ . '/spec');
     remove_composer_deps(['phpspec/phpspec']);
+    remove_composer_script('phpspec');
 }
 
 if (false === $useBehat) {
