@@ -303,7 +303,14 @@ if (false === $usePhpUnit && false === $useBehat) {
     remove_composer_deps(['symfony/browser-kit']);
 }
 
-confirm('Execute `composer install` and run tests?') && run('composer install && composer ci');
+$runSetup = confirm('Execute `composer install` and run tests?') ;
+
+if ($runSetup) {
+    run('composer install');
+    run('php tests/Application/bin/console doctrine:database:create -e test');
+    run('php tests/Application/bin/console doctrine:schema:update -e test -f');
+    run('composer ci');
+}
 
 $autoRemove = confirm('Let this script delete itself?', true);
 

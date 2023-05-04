@@ -31,7 +31,7 @@ jobs:
                 uses: actions/checkout@v3
 
             -   name: Build application
-                uses: SyliusLabs/BuildTestAppAction@v2.0
+                uses: SyliusLabs/BuildTestAppAction@v2.1
                 with:
                     build_type: "plugin"
                     cache_key: "${{ github.run_id }}-${{ runner.os }}-${{ hashFiles('composer.json') }}-sylius-${{ matrix.sylius }}-symfony-${{ matrix.symfony }}"
@@ -42,24 +42,11 @@ jobs:
                     php_version: ${{ matrix.php }}
                     symfony_version: ${{ matrix.symfony }}
 
-            -
-                name: Run PHPStan
-                run: vendor/bin/phpstan analyse -c phpstan.neon -l max src/
+            -   name: Setup
+                run: php configure.php << TEST_ARGUMENTS
 
             -
-                name: Run Psalm
-                run: vendor/bin/psalm
-
-            -
-                name: Run PHPSpec
-                run: vendor/bin/phpspec run --ansi -f progress --no-interaction
-
-            -
-                name: Run PHPUnit
-                run: vendor/bin/phpunit --colors=always
-
-            -
-                name: Run Behat
+                name: Run Behat JS
                 run: vendor/bin/behat --colors --strict -vvv --no-interaction || vendor/bin/behat --colors --strict -vvv --no-interaction --rerun
 
             -

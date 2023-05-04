@@ -4,7 +4,7 @@ default:
     suites:
         greeting_customer:
             contexts:
-                - acme_sylius_example.context.ui.shop.welcome
+                - Tests\:full_namespace\Behat\Context\Ui\Shop\WelcomeContext
 
             filters:
                 tags: "@greeting_customer"

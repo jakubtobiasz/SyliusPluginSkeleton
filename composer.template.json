@@ -80,7 +80,7 @@
         "phpstan": "phpstan",
         "phpspec": "phpspec run",
         "phpunit": "phpunit",
-        "behat": "APP_ENV=test vendor/bin/behat",
+        "behat:nojs": "APP_ENV=test vendor/bin/behat --tags=\"~@javascript\"",
         "static-analysis": [
             "@ecs",
             "@psalm",
@@ -89,7 +89,7 @@
         "tests": [
             "@phpspec",
             "@phpunit",
-            "@behat"
+            "@behat:nojs"
         ],
         "ci": [
             "@static-analysis",

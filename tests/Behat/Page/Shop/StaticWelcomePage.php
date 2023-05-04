@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Acme\SyliusExamplePlugin\Behat\Page\Shop;
+namespace Tests\:full_namespace\Behat\Page\Shop;
 
 use FriendsOfBehat\PageObjectExtension\Page\SymfonyPage;
 
 class StaticWelcomePage extends SymfonyPage implements WelcomePageInterface
 {
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getGreeting(): string
     {
@@ -17,7 +17,7 @@ class StaticWelcomePage extends SymfonyPage implements WelcomePageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     public function getRouteName(): string
     {
@@ -25,7 +25,7 @@ class StaticWelcomePage extends SymfonyPage implements WelcomePageInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @inheritdoc
      */
     protected function getDefinedElements(): array
     {
