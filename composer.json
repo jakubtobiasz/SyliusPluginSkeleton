@@ -95,7 +95,8 @@
             "php bin/create_node_symlink.php"
         ],
         "post-create-project-cmd": [
-            "php bin/create_node_symlink.php"
+            "php bin/create_node_symlink.php",
+            "@configure"
         ],
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
