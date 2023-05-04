@@ -1,4 +1,3 @@
-#!/usr/bin/env php
 <?php
 
 function ask(string $question, string $default = ''): string
@@ -293,6 +292,11 @@ if (false === $usePhpUnit && false === $useBehat) {
     remove_composer_deps(['symfony/browser-kit']);
 }
 
-//confirm('Execute `composer install` and run tests?') && run('composer install && composer test');
+confirm('Execute `composer install` and run tests?') && run('composer install && composer ci');
 
-//confirm('Let this script delete itself?', true) && unlink(__FILE__);
+$autoRemove = confirm('Let this script delete itself?', true);
+
+if ($autoRemove) {
+    unlink(__FILE__);
+    remove_composer_script('configure');
+}
