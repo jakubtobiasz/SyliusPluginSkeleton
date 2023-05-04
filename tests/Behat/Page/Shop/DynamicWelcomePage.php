@@ -13,7 +13,8 @@ class DynamicWelcomePage extends SymfonyPage implements WelcomePageInterface
      */
     public function getGreeting(): string
     {
-        return $this->getSession()->getPage()->waitFor(3, function (): string {
+        /** @var string $greeting */
+        $greeting = $this->getSession()->getPage()->waitFor(3, function (): string {
             $greeting = $this->getElement('greeting')->getText();
 
             if ('Loading...' === $greeting) {
@@ -22,6 +23,8 @@ class DynamicWelcomePage extends SymfonyPage implements WelcomePageInterface
 
             return $greeting;
         });
+
+        return $greeting;
     }
 
     /**
