@@ -1,12 +1,12 @@
 {
-    "name": ":package_name",
+    "name": "test/test",
     "description": ":package_description",
     "type": "sylius-plugin",
     "license": "MIT",
     "authors": [
         {
             "name": ":author_name",
-            "email": ":author_email"
+            "email": "test@test.test"
         }
     ],
     "autoload": {
@@ -67,6 +67,26 @@
         }
     },
     "scripts": {
+        "serve": "symfony serve --dir=tests/Application --daemon",
+        "server:stop": "symfony server:stop --dir=tests/Application",
+        "ecs": "ecs",
+        "psalm": "psalm",
+        "phpstan": "phpstan",
+        "phpspec": "phpspec run",
+        "phpunit": "phpunit",
+        "static-analysis": [
+            "@ecs",
+            "@psalm",
+            "@phpstan"
+        ],
+        "tests": [
+            "@phpspec",
+            "@phpunit"
+        ],
+        "ci": [
+            "@static-analysis",
+            "@tests"
+        ],
         "post-install-cmd": [
             "php bin/create_node_symlink.php"
         ],
