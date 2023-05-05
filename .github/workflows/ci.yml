@@ -29,6 +29,9 @@ jobs:
         steps:
             -
                 uses: actions/checkout@v3
+                
+            -   name: Setup
+                run: php configure.php < TEST_ARGUMENTS
 
             -   name: Build application
                 uses: SyliusLabs/BuildTestAppAction@v2.1
@@ -41,9 +44,6 @@ jobs:
                     database_version: ${{ matrix.mysql }}
                     php_version: ${{ matrix.php }}
                     symfony_version: ${{ matrix.symfony }}
-
-            -   name: Setup
-                run: php configure.php << TEST_ARGUMENTS
 
             -
                 name: Run Behat JS

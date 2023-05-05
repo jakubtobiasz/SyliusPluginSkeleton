@@ -148,12 +148,12 @@ function determineSeparator(string $path): string
 
 function replaceForWindows(): array
 {
-    return preg_split('/\\r\\n|\\r|\\n/', run('dir /S /B * | findstr /v /i .git\ | findstr /v /i vendor | findstr /v /i '.basename(__FILE__).' | findstr /r /i /M /F:/ ":author_email :author_name :config_key :extension_class :full_namespace :full_namespace_double_backslash :package_description :package_name :plugin_class"'));
+    return preg_split('/\\r\\n|\\r|\\n/', run('dir /S /B * | findstr /v /i .git\ | findstr /v /i vendor | findstr /v /i '.basename(__FILE__).' | findstr /r /i /M /F:/ ":author_email :author_name :config_key :extension_class :full_namespace :full_namespace_double_backslash :package_description :package_name :plugin_class :plugin_class_lowercase"'));
 }
 
 function replaceForAllOtherOSes(): array
 {
-    return explode(PHP_EOL, run('grep -E -r -l -i ":author_email|:author_name|:config_key|:extension_class|:full_namespace|:full_namespace_double_backslash|:package_description|:package_name|:plugin_class" --exclude-dir=vendor ./* ./.github/* | grep -v '.basename(__FILE__)));
+    return explode(PHP_EOL, run('grep -E -r -l -i ":author_email|:author_name|:config_key|:extension_class|:full_namespace|:full_namespace_double_backslash|:package_description|:package_name|:plugin_class|:plugin_class_lowercase" --exclude-dir=vendor ./* ./.github/* | grep -v '.basename(__FILE__)));
 }
 
 $gitName = run('git config user.name');
@@ -222,6 +222,7 @@ foreach ($files as $file) {
         ':full_namespace' => $fullNamespace,
         ':package_description' => $packageDescription,
         ':package_name' => $packageName,
+        ':plugin_class_lowercase' => strtolower($pluginClass),
         ':plugin_class' => $pluginClass,
     ]);
 
